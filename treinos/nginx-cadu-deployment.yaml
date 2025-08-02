@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx-cadu
+  name: nginx-cadu
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx-cadu
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx-cadu
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+      - image: httpd
+        name: httpd
+        command:
+          - "sleep"
+          - "999999999"
