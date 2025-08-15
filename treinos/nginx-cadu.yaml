@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cadu-nginx
+  name: cadu-nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cadu-nginx
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: cadu-nginx
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+      - image: nicolaka/netshoot
+        name: netshoot
+        command:
+        - sleep
+        - infinity
