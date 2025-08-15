@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cadu-web-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: cadu-web-app
+  template:
+    metadata:
+      labels:
+        app: cadu-web-app
+    spec:
+      containers:
+      - name: cadu-web-app
+        image: caduunisal/cadu-web-app:latest
+        ports:
+        - containerPort: 80
+        imagePullPolicy: Always
+

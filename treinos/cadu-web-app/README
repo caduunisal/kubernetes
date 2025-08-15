@@ -1,0 +1,84 @@
+# 1 - Criar diretório e entrar nele
+mkdir cadu-web-app
+cd cadu-web-app
+
+# 2 - Criar index.html
+cat <<EOF > index.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cadu Web App</title>
+</head>
+<body>
+    <h1>Docker, Kubernetes and others...</h1>
+</body>
+</html>
+EOF
+
+# 3 - Criar Dockerfile
+cat <<EOF > Dockerfile
+FROM nginx:alpine
+COPY index.html /usr/share/nginx/html/index.html
+EOF
+
+# 4 - Criar imagem Docker
+docker build -t cadu-web-app:latest .
+
+# 5 - Testar localmente
+docker run -d -p 8080:80 cadu-web-app:latest
+
+# 6 - Login no Docker Hub
+docker login
+
+# 7 - Marcar imagem com usuário Docker Hub (substitua SEU_USUARIO_DOCKER pelo seu usuário real)
+docker tag cadu-web-app:latest SEU_USUARIO_DOCKER/cadu-web-app:latest
+
+# 8 - Enviar para Docker Hub
+docker push SEU_USUARIO_DOCKER/cadu-web-app:latest
+
+# 9 - Criar Deployment YAML
+cat <<EOF > cadu-web-app-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cadu-web-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cadu-web-app
+  template:
+    metadata:
+      labels:
+        app: cadu-web-app
+    spec:
+      containers:
+      - name: cadu-web-app
+        image: SEU_USUARIO_DOCKER/cadu-web-app:latest
+        ports:
+        - containerPort: 80
+        imagePullPolicy: Always
+EOF
+
+# 10 - Criar Service YAML
+cat <<EOF > cadu-web-app-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: cadu-web-app-service
+spec:
+  selector:
+    app: cadu-web-app
+  ports:
+    - port: 80
+      targetPort: 80
+  type: NodePort
+EOF
+
+# 11 - Aplicar no Kubernetes
+kubectl apply -f cadu-web-app-deployment.yaml
+kubectl apply -f cadu-web-app-service.yaml
+
+# 12 - Acessar via Minikube
+minikube service cadu-web-app-service
+
